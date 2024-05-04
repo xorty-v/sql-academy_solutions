@@ -9,7 +9,7 @@ SELECT name from Passenger;
 
 `Задание 2: Вывести названия всеx авиакомпаний`
 ```sql
-SELECT name from Passenger;
+SELECT name FROM Company;
 ```
 
 `Задание 3: Вывести все рейсы, совершенные из Москвы`
