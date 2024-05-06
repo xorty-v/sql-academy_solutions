@@ -157,3 +157,100 @@ FROM FamilyMembers AS fm
 WHERE good_type_name = 'entertainment'
 GROUP BY fm.status, fm.member_name;
 ```
+
+`Задание 21: Определить товары, которые покупали более 1 раза`
+```sql
+SELECT good_name
+FROM Goods AS g
+	JOIN Payments AS p ON p.good = g.good_id
+GROUP BY good
+HAVING COUNT(*) > 1;
+```
+`Задание 22: Найти имена всех матерей (mother)`
+```sql
+SELECT member_name
+FROM FamilyMembers
+WHERE STATUS = 'mother';
+```
+
+`Задание 23: Найдите самый дорогой деликатес (delicacies) и выведите его цену`
+```sql
+SELECT good_name, unit_price
+FROM Goods AS g
+	JOIN Payments AS p ON p.good = g.good_id
+	JOIN GoodTypes AS gt ON gt.good_type_id = g.type
+WHERE good_type_name = 'delicacies'
+ORDER BY unit_price DESC
+LIMIT 1;
+```
+
+`Задание 24: Определить кто и сколько потратил в июне 2005`
+```sql
+SELECT member_name, SUM(amount * unit_price) AS costs
+FROM FamilyMembers AS fm
+    JOIN Payments AS p ON p.family_member = fm.member_id
+WHERE YEAR(date) = '2005' AND MONTH(date) = 6
+GROUP BY member_name;
+```
+
+`Задание 25: Определить, какие товары не покупались в 2005 году`
+```sql
+SELECT good_name
+FROM Goods
+WHERE good_id NOT IN (
+		SELECT good
+		FROM Payments
+		WHERE YEAR(date) = '2005');
+```
+
+`Задание 26: Определить группы товаров, которые не приобретались в 2005 году`
+```sql
+SELECT good_type_name
+FROM GoodTypes
+WHERE good_type_id NOT IN(
+		SELECT TYPE
+		FROM Goods AS g
+			JOIN Payments AS p ON p.good = g.good_id
+		WHERE YEAR(date) = '2005');
+```
+
+`Задание 27: Узнать, сколько потрачено на каждую из групп товаров в 2005 году. Вывести название группы и сумму.`
+```sql
+SELECT good_type_name, SUM(amount * unit_price) AS costs
+FROM GoodTypes AS gt
+    JOIN Goods AS g ON g.type = gt.good_type_id
+    JOIN Payments AS p ON p.good = g.good_id
+WHERE YEAR(date) = '2005'
+GROUP BY good_type_name;
+```
+
+`Задание 28: Сколько рейсов совершили авиакомпании из Ростова (Rostov) в Москву (Moscow)?`
+```sql
+SELECT COUNT(*) AS COUNT
+FROM Trip
+WHERE town_from = 'Rostov'AND town_to = 'Moscow'
+```
+
+`Задание 29: Выведите имена пассажиров улетевших в Москву (Moscow) на самолете TU-134`
+```sql
+SELECT DISTINCT name
+FROM Trip AS t
+	JOIN Pass_in_trip AS pit ON pit.trip = t.id
+	JOIN Passenger AS p ON p.id = pit.passenger
+WHERE town_to = 'Moscow' AND plane = 'TU-134';
+```
+
+`Задание 30: Выведите нагруженность (число пассажиров) каждого рейса (trip). Результат вывести в отсортированном виде по убыванию нагруженности.`
+```sql
+SELECT trip, COUNT(passenger) AS count
+FROM Pass_in_trip
+GROUP BY trip
+ORDER BY count DESC;
+```
+
+`Задание 31: Вывести всех членов семьи с фамилией Quincey.`
+```sql
+SELECT *
+FROM FamilyMembers
+WHERE member_name LIKE '% Quincey';
+```
