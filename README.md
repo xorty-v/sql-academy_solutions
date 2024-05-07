@@ -254,3 +254,91 @@ SELECT *
 FROM FamilyMembers
 WHERE member_name LIKE '% Quincey';
 ```
+
+`Задание 32: Вывести средний возраст людей (в годах), хранящихся в базе данных. Результат округлите до целого в меньшую сторону.`
+```sql
+SELECT FLOOR(AVG(TIMESTAMPDIFF(YEAR, birthday, CURDATE()))) AS age
+FROM FamilyMembers
+```
+
+`Задание 33: Найдите среднюю цену икры на основе данных, хранящихся в таблице Payments. В базе данных хранятся данные о покупках красной (red caviar) и черной икры (black caviar).`
+```sql
+SELECT AVG(unit_price) AS cost
+FROM Payments AS p
+	JOIN Goods AS g ON g.good_id = p.good
+WHERE good_name IN('red caviar', 'black caviar');
+```
+
+`Задание 34: Сколько всего 10-ых классов`
+```sql
+SELECT COUNT(name) AS count
+FROM Class
+WHERE name LIKE '10 %';
+```
+
+`Задание 35: Сколько различных кабинетов школы использовались 2 сентября 2019 года для проведения занятий?`
+```sql
+SELECT COUNT(classroom) AS count
+FROM Schedule
+WHERE YEAR(date) = '2019' AND MONTH(date) = '9' AND DAY(date) = '2';
+```
+
+`Задание 36: Выведите информацию об обучающихся живущих на улице Пушкина (ul. Pushkina)?`
+```sql
+SELECT *
+FROM Student
+WHERE address LIKE 'ul. Pushkina%';
+```
+
+`Задание 37: Сколько лет самому молодому обучающемуся?`
+```sql
+SELECT MIN(TIMESTAMPDIFF(YEAR, birthday, NOW())) AS year
+FROM Student
+```
+
+`Задание 38: Сколько Анн (Anna) учится в школе?`
+```sql
+SELECT COUNT(*) AS count
+FROM Student
+WHERE first_name = 'Anna';
+```
+
+`Задание 39: Сколько обучающихся в 10 B классе?`
+```sql
+SELECT COUNT(*) AS count
+FROM Class AS c
+	JOIN Student_in_class AS sic ON sic.class = c.id
+WHERE name = '10 B';
+```
+
+`Задание 40: Выведите название предметов, которые преподает Ромашкин П.П. (Romashkin P.P.).`
+```sql
+SELECT name AS subjects
+FROM Subject AS sj
+	JOIN Schedule AS sc ON sc.subject = sj.id
+	JOIN Teacher AS tc ON tc.id = sc.teacher
+WHERE last_name = 'Romashkin'
+	AND first_name LIKE 'P%'
+	AND middle_name LIKE 'P%';
+```
+
+`Задание 41: Выясните, во сколько по расписанию начинается четвёртое занятие.`
+```sql
+SELECT start_pair
+FROM Timepair
+WHERE id = 4;
+```
+
+`Задание 42: Сколько времени обучающийся будет находиться в школе, учась со 2-го по 4-ый уч. предмет?`
+```sql
+SELECT DISTINCT TIMEDIFF(
+		(
+			SELECT end_pair FROM Timepair
+			WHERE id = 4
+		),
+		(
+			SELECT start_pair FROM Timepair
+			WHERE id = 2
+		)) AS time
+FROM Timepair;
+```
