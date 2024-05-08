@@ -342,3 +342,89 @@ SELECT DISTINCT TIMEDIFF(
 		)) AS time
 FROM Timepair;
 ```
+
+`Задание 43: Выведите фамилии преподавателей, которые ведут физическую культуру (Physical Culture). Отсортируйте преподавателей по фамилии в алфавитном порядке.`
+```sql
+SELECT last_name
+FROM Teacher AS t
+	JOIN Schedule AS sc ON sc.teacher = t.id
+	JOIN Subject AS sj ON sj.Id = sc.subject
+WHERE name = 'Physical Culture'
+ORDER BY last_name;
+```
+
+`Задание 44: Найдите максимальный возраст (количество лет) среди обучающихся 10 классов на сегодняшний день. Для получения текущих даты и времени используйте функцию NOW().`
+```sql
+SELECT MAX(TIMESTAMPDIFF(YEAR, birthday, NOW())) AS max_year
+FROM Student AS st
+	JOIN Student_in_class sc ON sc.student = st.id
+	JOIN Class cl ON cl.id = sc.class
+WHERE name LIKE '10 %';
+```
+
+`Задание 45: Какие кабинеты чаще всего использовались для проведения занятий? Выведите те, которые использовались максимальное количество раз.`
+```sql
+SELECT classroom
+FROM Schedule
+GROUP BY classroom
+HAVING COUNT(classroom) = (
+		SELECT COUNT(classroom) AS COUNT
+		FROM Schedule
+		GROUP BY classroom
+		ORDER BY COUNT DESC LIMIT 1);
+```
+
+`Задание 46: В каких классах введет занятия преподаватель "Krauze"?`
+```sql
+SELECT DISTINCT c.name
+FROM Schedule AS s
+	JOIN Teacher t ON t.id = s.teacher
+	JOIN Class c ON c.id = s.class
+WHERE t.last_name = 'Krauze';
+```
+
+
+`Задание 47: Сколько занятий провел Krauze 30 августа 2019 г.?`
+```sql
+SELECT COUNT(*) AS COUNT
+FROM Schedule AS s
+	JOIN Teacher AS t ON t.id = s.teacher
+WHERE t.last_name = 'Krauze'
+	AND DATE_FORMAT(date, '%e %M %Y') = '30 August 2019';
+```
+
+`Задание 48: Выведите заполненность классов в порядке убывания`
+```sql
+SELECT name, COUNT(student) AS count
+FROM Class AS c
+	JOIN Student_in_class AS sic ON sic.class = c.id
+GROUP BY name
+ORDER BY count DESC;
+```
+
+`Задание 53: Измените имя "Andie Quincey" на новое "Andie Anthony".`
+```sql
+UPDATE FamilyMembers
+SET member_name = 'Andie Anthony'
+WHERE member_name = 'Andie Quincey';
+```
+
+`Задание 56: Удалить все перелеты, совершенные из Москвы (Moscow).`
+```sql
+DELETE FROM Trip
+WHERE town_from = 'Moscow';
+```
+
+`Задание 74: Выведите идентификатор и признак наличия интернета в помещении. Если интернет в сдаваемом жилье присутствует, то выведите «YES», иначе «NO».`
+```sql
+SELECT id,
+	IF(has_internet = 1, 'YES', 'NO') AS has_internet
+FROM Rooms;
+```
+
+`Задание 75: Выведите фамилию, имя и дату рождения студентов, кто был рожден в мае.`
+```sql
+SELECT last_name, first_name, birthday
+FROM Student
+WHERE MONTHNAME(birthday) = 'May';
+```
